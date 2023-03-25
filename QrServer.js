@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
-// Define a secret key for signing and verifying JWT tokens
+// Define a secret key for signing and verifying JWT tokens4
 const secretKey = 'mySecretKey';
+app.use(cors());
 
 // Define a middleware function to verify the JWT token
 const verifyToken = (req, res, next) => {
@@ -36,9 +38,22 @@ const verifyToken = (req, res, next) => {
 };
 
 // Define an API route that requires authorization
-app.get('/data', verifyToken, (req, res) => {
+app.get('/verify', verifyToken, (req, res) => {
   // The user is authorized, send the requested data
   res.json({ data: `This is some secret data ${req.user.id}` });
+});
+
+
+app.get('/genrate', (req, res) => {
+  const generateToken = (user) => {
+    return jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
+  };
+  const userID = req.params.userID;
+  const currentTime = Date.now();
+  const user = { id: userID, time: currentTime };
+  const token = generateToken(user);
+  console.log(token);
+  res.json({ jwtToken: token });
 });
 
 // Start the server

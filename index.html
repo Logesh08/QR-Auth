@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hii</title>
+</head>
+<body>
+    <title>Examle</title>
+    <img src="" alt="Loading..." id="qrimg">
+    <br>
+    <input type="text" id="uid">
+    <button onclick="generate()">go</button>
+    <script>
+        function generate(){
+            let uid = document.getElementById('uid').value;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = "json"
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                render(xmlHttp.response);
+            }
+            xmlHttp.open("GET", `http://localhost:3000/genrate?userId=${uid}`, true); // true for asynchronous 
+            xmlHttp.send(null);
+        }
+        function render(jsonObj){
+            let imageTag = document.getElementById('qrimg');
+            let token = jsonObj.jwtToken;
+            imageTag.src = `https://api.qrserver.com/v1/create-qr-code/?data=${token}`;
+        }
+    </script>
+</body>
+</html>
