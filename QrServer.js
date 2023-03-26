@@ -40,6 +40,7 @@ const verifyToken = (req, res, next) => {
 // Define an API route that requires authorization
 app.get('/verify', verifyToken, (req, res) => {
   // The user is authorized, send the requested data
+  // firebase write {token:xxxxx, auth: true}
   res.json({ data: `This is some secret data ${req.user.id}` });
 });
 
@@ -48,8 +49,9 @@ app.get('/genrate', (req, res) => {
   const generateToken = (timeStamp) => {
     return jwt.sign({ id: timeStamp }, secretKey, { expiresIn: '1h' });
   };
-  const currentTime = Date.now();
+  const currentTime = Date.now(); // crome tab
   const token = generateToken(currentTime);
+  // firebase write {token:xxxxx, auth: false}
   console.log(token);
   res.json({ jwtToken: token });
 });
