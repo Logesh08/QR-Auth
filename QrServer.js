@@ -45,13 +45,11 @@ app.get('/verify', verifyToken, (req, res) => {
 
 
 app.get('/genrate', (req, res) => {
-  const generateToken = (user) => {
-    return jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
+  const generateToken = (timeStamp) => {
+    return jwt.sign({ id: timeStamp }, secretKey, { expiresIn: '1h' });
   };
-  const userID = req.params.userID;
   const currentTime = Date.now();
-  const user = { id: userID, time: currentTime };
-  const token = generateToken(user);
+  const token = generateToken(currentTime);
   console.log(token);
   res.json({ jwtToken: token });
 });

@@ -10,18 +10,52 @@
     <title>Examle</title>
     <img src="" alt="Loading..." id="qrimg">
     <br>
-    <input type="text" id="uid">
-    <button onclick="generate()">go</button>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script>
+        const config = {
+            apiKey: "AIzaSyCUHYwGyT3awkXBmo5J2aaGR0ye2tfitEY",
+            authDomain: "truewallet-7b947.firebaseapp.com",
+            databaseURL: "https://truewallet-7b947-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "truewallet-7b947",
+            storageBucket: "truewallet-7b947.appspot.com",
+            messagingSenderId: "422881168187",
+            appId: "1:422881168187:web:0a8add4b4d615be793851e"
+        };
+        firebase.initializeApp(config);
+    
+        // Get a reference to the Firebase database
+        var database = firebase.database();
+    
+        // Get a reference to the location in the database where you want to listen for changes
+        var dataRef = database.ref('/qr-codes/main');
+    
+        // Use the on() method to listen for changes to the data at the location
+        dataRef.on('value', function(snapshot) {
+          // This function will be called every time the value at the location changes
+    
+          // Get the new value of the data
+          var newData = snapshot.val();
+    
+          // Call your function with the new data as an argument
+          myFunction(newData);
+        });
+    
+        // Define your function to be called when the data changes
+        function myFunction(data) {
+          // Do something with the new data
+          console.log('Data changed:', data);
+        }
+    </script>
     <script>
         function generate(){
-            let uid = document.getElementById('uid').value;
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.responseType = "json"
             xmlHttp.onreadystatechange = function() { 
                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
                 render(xmlHttp.response);
             }
-            xmlHttp.open("GET", `http://localhost:3000/genrate?userId=${uid}`, true); // true for asynchronous 
+            xmlHttp.open("GET", `http://localhost:3000/genrate`, true); // true for asynchronous 
             xmlHttp.send(null);
         }
         function render(jsonObj){
@@ -29,6 +63,11 @@
             let token = jsonObj.jwtToken;
             imageTag.src = `https://api.qrserver.com/v1/create-qr-code/?data=${token}`;
         }
+        document.addEventListener("readystatechange", (event) => {
+            if(document.readyState==="complete"){
+                generate();
+            }
+        });
     </script>
 </body>
 </html>
